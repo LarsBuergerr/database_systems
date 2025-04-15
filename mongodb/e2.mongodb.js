@@ -84,3 +84,42 @@ db.vorlesungen.aggregate([
     $limit: 1,
   },
 ]);
+
+db.vorlesungen.aggregate([
+  {
+    $match: {
+      "studiengang.$id": db.studiengaenge.findOne({
+        kuerzel: "AIN",
+      })._id,
+    },
+  },
+  {
+    $group: {
+      _id: "$dozent",
+      swsSumme: { $sum: "$sws" },
+    },
+  },
+  {
+    $group: {
+      _id: null,
+      maxSws: { $max: "$swsSumme" },
+      all: { $push: { dozent: "$_id", sws: "$swsSumme" } },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      dozentenMitMaxSws: {
+        $filter: {
+          input: "$all",
+          as: "entry",
+          cond: { $eq: ["$$entry.sws", "$maxSws"] },
+        },
+      },
+    },
+  },
+  { $unwind: "$dozentenMitMaxSws" },
+  {
+    $replaceRoot: { newRoot: "$dozentenMitMaxSws" },
+  },
+]);
