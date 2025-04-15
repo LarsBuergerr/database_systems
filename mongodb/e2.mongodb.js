@@ -9,8 +9,6 @@ db.studiengaenge.find(
   }
 );
 
-db.vorlesungen.find({});
-
 // b)
 db.vorlesungen
   .find(
