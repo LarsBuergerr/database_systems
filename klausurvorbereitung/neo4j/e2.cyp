@@ -19,8 +19,7 @@ WHERE k.sterne <> 5
 RETURN a;
 
 // Welche Personen haben gleichen ARtikel gekauft und jeweils mit 5 sternen bewertet?
-MATCH
-  (k1:Kunde)-[:kauf {sterne: 5}]-(a:Artikel), (a)-[:kauf {sterne: 5}]-(k2:Kunde)
+MATCH (k1:Kunde)-[:kauf {sterne: 5}]-(a:Artikel)-[:kauf {sterne: 5}]-(k2:Kunde)
 WHERE k1 <> k2
 RETURN k1, k2, a;
 
